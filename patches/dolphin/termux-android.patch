@@ -1,0 +1,110 @@
+diff --git a/Externals/bzip2/CMakeLists.txt b/Externals/bzip2/CMakeLists.txt
+index 52c5d1f..e4364c1 100644
+--- a/Externals/bzip2/CMakeLists.txt
++++ b/Externals/bzip2/CMakeLists.txt
+@@ -1,3 +1,4 @@
++cmake_minimum_required(VERSION 3.10)
+ project(bzip2 C)
+ 
+ # TODO: Use bzip2 1.1.0's native support for CMake static builds once it releases.
+diff --git a/Externals/libiconv/CMakeLists.txt b/Externals/libiconv/CMakeLists.txt
+index 902bddc..bc37154 100644
+--- a/Externals/libiconv/CMakeLists.txt
++++ b/Externals/libiconv/CMakeLists.txt
+@@ -1,3 +1,4 @@
++cmake_minimum_required(VERSION 3.10)
+ project(libiconv VERSION 1.18 LANGUAGES C)
+ add_subdirectory(lib)
+ add_subdirectory(libcharset)
+diff --git a/Externals/liblzma/CMakeLists.txt b/Externals/liblzma/CMakeLists.txt
+index a451bb6..2617620 100644
+--- a/Externals/liblzma/CMakeLists.txt
++++ b/Externals/liblzma/CMakeLists.txt
+@@ -1,3 +1,4 @@
++cmake_minimum_required(VERSION 3.10)
+ project(lzma C)
+ 
+ include(CheckTypeSize)
+diff --git a/Externals/libusb/CMakeLists.txt b/Externals/libusb/CMakeLists.txt
+index c5325bf..0a51f0c 100644
+--- a/Externals/libusb/CMakeLists.txt
++++ b/Externals/libusb/CMakeLists.txt
+@@ -50,6 +50,8 @@ elseif(APPLE)
+ #  )
+ #  find_library(LOG_LIBRARY log)
+ #  target_link_libraries(usb PRIVATE ${LOG_LIBRARY})
++elseif(CMAKE_SYSTEM_NAME STREQUAL "Android")
++  target_sources(usb PRIVATE libusb/libusb/os/null_usb.c)
+ elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+   target_sources(usb PRIVATE libusb/libusb/os/linux_usbfs.c)
+   find_package(LIBUDEV)
+diff --git a/Source/Core/Common/CMakeLists.txt b/Source/Core/Common/CMakeLists.txt
+index c94c3e2..24f4e62 100644
+--- a/Source/Core/Common/CMakeLists.txt
++++ b/Source/Core/Common/CMakeLists.txt
+@@ -230,7 +230,7 @@ elseif(HAIKU)
+   target_link_libraries(common PRIVATE be GL)
+ endif()
+ 
+-if(ANDROID)
++if(ANDROID OR CMAKE_SYSTEM_NAME STREQUAL "Android")
+   target_sources(common PRIVATE
+     Logging/ConsoleListenerDroid.cpp
+     MemArenaAndroid.cpp
+diff --git a/Source/Core/Common/Thread.cpp b/Source/Core/Common/Thread.cpp
+index 8f8f691..ce16d7a 100644
+--- a/Source/Core/Common/Thread.cpp
++++ b/Source/Core/Common/Thread.cpp
+@@ -119,7 +119,7 @@ void SetThreadAffinity(std::thread::native_handle_type thread, u32 mask)
+ #ifdef __APPLE__
+   thread_policy_set(pthread_mach_thread_np(thread), THREAD_AFFINITY_POLICY, (integer_t*)&mask, 1);
+ #elif (defined __linux__ || defined BSD4_4 || defined __FreeBSD__ || defined __NetBSD__) &&        \
+-    !(defined ANDROID)
++    !(defined ANDROID || defined __ANDROID__)
+ #ifndef __NetBSD__
+ #ifdef __FreeBSD__
+   cpuset_t cpu_set;
+diff --git a/Source/Core/Core/CMakeLists.txt b/Source/Core/Core/CMakeLists.txt
+index 023b667..3644fa7 100644
+--- a/Source/Core/Core/CMakeLists.txt
++++ b/Source/Core/Core/CMakeLists.txt
+@@ -855,3 +855,7 @@ if(USE_RETRO_ACHIEVEMENTS)
+     target_compile_definitions(core PUBLIC -DRC_CLIENT_SUPPORTS_RAINTEGRATION)
+   endif()
+ endif()
++
++target_include_directories(core PRIVATE "${CMAKE_SOURCE_DIR}/Source/Android")
++
++target_compile_definitions(core PRIVATE __TERMUX_DOLPHIN_TOOL__)
+diff --git a/Source/Core/Core/IOS/Network/IP/Top.cpp b/Source/Core/Core/IOS/Network/IP/Top.cpp
+index e38fd1d..0d56adb 100644
+--- a/Source/Core/Core/IOS/Network/IP/Top.cpp
++++ b/Source/Core/Core/IOS/Network/IP/Top.cpp
+@@ -400,7 +400,7 @@ static std::optional<DefaultInterface> GetSystemDefaultInterface()
+       }
+     }
+   }
+-#elif defined(__ANDROID__)
++#elif defined(__ANDROID__) && !defined(__TERMUX_DOLPHIN_TOOL__)
+   const u32 addr = GetNetworkIpAddress();
+   const u32 prefix_length = GetNetworkPrefixLength();
+   const u32 netmask = (1 << prefix_length) - 1;
+@@ -1115,7 +1115,7 @@ IPCReply NetIPTopDevice::HandleGetInterfaceOptRequest(const IOCtlVRequest& reque
+         FREE(AdapterAddresses);
+       }
+     }
+-#elif (defined(__linux__) && !defined(ANDROID)) || defined(__APPLE__) || defined(__FreeBSD__) ||   \
++#elif (defined(__linux__) && !defined(ANDROID) && !defined(__ANDROID__)) || defined(__APPLE__) || defined(__FreeBSD__) ||   \
+     defined(__OpenBSD__) || defined(__NetBSD__) || defined(__HAIKU__)
+     if (!Core::WantsDeterminism())
+     {
+diff --git a/Source/Core/DolphinTool/CMakeLists.txt b/Source/Core/DolphinTool/CMakeLists.txt
+index fad24ad..f097c37 100644
+--- a/Source/Core/DolphinTool/CMakeLists.txt
++++ b/Source/Core/DolphinTool/CMakeLists.txt
+@@ -47,3 +47,5 @@ set(CPACK_PACKAGE_EXECUTABLES ${CPACK_PACKAGE_EXECUTABLES} dolphin-tool)
+ if (NOT WIN32)
+   install(TARGETS dolphin-tool RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+ endif()
++
++target_link_libraries(dolphin-tool PRIVATE log)

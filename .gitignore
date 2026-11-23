@@ -1,0 +1,34 @@
+# Archivos de firma privados
+*.jks
+*.keystore
+*.p12
+*.pem
+*.key
+
+# Compilaciones y respaldos
+build/
+backups/
+*.apk
+*.a
+*.o
+*.so
+*.class
+*.dex
+
+# Juegos y archivos temporales
+*.iso
+*.rvz
+*.wbfs
+*.img
+*.log
+
+# Herramientas locales
+sdk/
+android-ndk/
+.gradle/
+.idea/
+
+# Archivos auxiliares
+*.bak
+*.zip
+*.idsig
