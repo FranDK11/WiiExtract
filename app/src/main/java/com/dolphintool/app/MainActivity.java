@@ -93,7 +93,7 @@ public class MainActivity extends Activity {
         TextView title = text("WiiExtract", 30, white, true);
         root.addView(title);
 
-        TextView subtitle = text("v0.4  ·  Wii Disc Extractor", 13, muted, false);
+        TextView subtitle = text("v1.0  ·  Wii Disc Extractor", 13, muted, false);
         LayoutParams subParams = new LayoutParams(-1, -2);
         subParams.topMargin = dp(5);
         subParams.bottomMargin = dp(26);
