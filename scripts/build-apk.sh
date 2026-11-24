@@ -20,7 +20,8 @@ fi
 }
 
 NATIVE="$ROOT/build/linktest/libdolphin_android.so"
-CPP="$ROOT/app/src/main/jniLibs/arm64-v8a/libc++_shared.so"
+NDK="${ANDROID_NDK_HOME:-$HOME/android-ndk/android-ndk-r27d}"
+CPP="$NDK/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/libc++_shared.so"
 
 for file in "$NATIVE" "$CPP"; do
     [ -f "$file" ] || {
