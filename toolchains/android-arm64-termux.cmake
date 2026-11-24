@@ -2,7 +2,11 @@ set(CMAKE_SYSTEM_NAME Android)
 set(CMAKE_SYSTEM_VERSION 24)
 set(CMAKE_ANDROID_ARCH_ABI arm64-v8a)
 
-set(NDK_ROOT "$ENV{HOME}/android-ndk/android-ndk-r27d")
+if(DEFINED ENV{ANDROID_NDK_HOME} AND NOT "$ENV{ANDROID_NDK_HOME}" STREQUAL "")
+    set(NDK_ROOT "$ENV{ANDROID_NDK_HOME}")
+else()
+    set(NDK_ROOT "$ENV{HOME}/android-ndk/android-ndk-r27d")
+endif()
 set(NDK_SYSROOT "${NDK_ROOT}/toolchains/llvm/prebuilt/linux-x86_64/sysroot")
 
 set(CMAKE_SYSROOT "${NDK_SYSROOT}")

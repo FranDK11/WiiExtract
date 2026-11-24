@@ -1,8 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# SPDX-License-Identifier: GPL-2.0-or-later
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-DOLPHIN="${DOLPHIN_SOURCE:-$HOME/dolphin}"
+DOLPHIN="${DOLPHIN_SOURCE:-$HOME/dolphin-wiiextract}"
 BUILD="$ROOT/build"
 TOOLCHAIN="$ROOT/toolchains/android-arm64-termux.cmake"
 
@@ -24,6 +25,7 @@ configure() {
         -G Ninja \
         -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN" \
         -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
         -DBUILD_SHARED_LIBS=OFF \
         "$@"
 }

@@ -1,4 +1,5 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# SPDX-License-Identifier: GPL-2.0-or-later
 set -euo pipefail
 
 cd "$HOME/DolphinToolAndroid"

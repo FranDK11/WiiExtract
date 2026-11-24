@@ -1,8 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# SPDX-License-Identifier: GPL-2.0-or-later
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-DOLPHIN="${DOLPHIN_SOURCE:-$HOME/dolphin}"
+DOLPHIN="${DOLPHIN_SOURCE:-$HOME/dolphin-wiiextract}"
 BUILD="${DOLPHIN_BUILD:-$DOLPHIN/build-android}"
 OUT="$ROOT/build/discio-custom"
 SOURCE="$ROOT/native/patches/Volume.cpp"

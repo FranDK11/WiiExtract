@@ -1,10 +1,12 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# SPDX-License-Identifier: GPL-2.0-or-later
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-DOLPHIN="${DOLPHIN_SOURCE:-$HOME/dolphin}"
+DOLPHIN="${DOLPHIN_SOURCE:-$HOME/dolphin-wiiextract}"
+DOLPHIN_BUILD="${DOLPHIN_BUILD:-$DOLPHIN/build-android}"
 
-export ROOT DOLPHIN
+export ROOT DOLPHIN DOLPHIN_BUILD
 
 python3 - <<'PY'
 import json
@@ -16,7 +18,7 @@ from pathlib import Path
 root = Path(os.environ["ROOT"])
 dolphin = Path(os.environ["DOLPHIN"])
 
-database = dolphin / "build-android/compile_commands.json"
+database = Path(os.environ["DOLPHIN_BUILD"]) / "compile_commands.json"
 entries = json.loads(database.read_text())
 
 matches = [

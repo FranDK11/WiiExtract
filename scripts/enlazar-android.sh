@@ -1,11 +1,16 @@
 #!/data/data/com.termux/files/usr/bin/bash
+# SPDX-License-Identifier: GPL-2.0-or-later
 
 set -e
 
-cd "$HOME/DolphinToolAndroid"
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$ROOT"
 
-LIBS="$HOME/dolphin/build-android"
-SYSROOT="$HOME/android-ndk/android-ndk-r27d/toolchains/llvm/prebuilt/linux-x86_64/sysroot"
+DOLPHIN="${DOLPHIN_SOURCE:-$HOME/dolphin-wiiextract}"
+LIBS="${DOLPHIN_BUILD:-$DOLPHIN/build-android}"
+export DOLPHIN_SOURCE="$DOLPHIN" DOLPHIN_BUILD="$LIBS"
+NDK="${ANDROID_NDK_HOME:-$HOME/android-ndk/android-ndk-r27d}"
+SYSROOT="$NDK/toolchains/llvm/prebuilt/linux-x86_64/sysroot"
 ANDROID_LIBS="$PWD/build/android-libs"
 OUTPUT="build/linktest/libdolphin_android.so"
 
@@ -26,10 +31,10 @@ if clang++ \
   -shared \
   -fPIC \
   -isystem "$SYSROOT/usr/include/c++/v1" \
-  -I "$HOME/dolphin/Source/Core" \
+  -I "$DOLPHIN/Source/Core" \
   -I "$LIBS/Source/Core" \
   -I "$LIBS/include" \
-  -I "$HOME/DolphinToolAndroid/build/fmt-12.2.1-src/include" \
+  -I "$ROOT/build/fmt-12.2.1-src/include" \
   -Wl,--no-undefined \
   -Wl,--gc-sections \
   -Wl,--as-needed \
@@ -55,7 +60,7 @@ if clang++ \
   "$ANDROID_LIBS/liblibcharset.a" \
   -Wl,--end-group \
   -L "$SYSROOT/usr/lib/aarch64-linux-android/24" \
-  "/data/data/com.termux/files/home/android-ndk/android-ndk-r27d/toolchains/llvm/prebuilt/linux-x86_64/lib/clang/18/lib/linux/aarch64/libunwind.a" \
+  "$NDK/toolchains/llvm/prebuilt/linux-x86_64/lib/clang/18/lib/linux/aarch64/libunwind.a" \
   -lc++_shared \
   -llog \
   -lm \
