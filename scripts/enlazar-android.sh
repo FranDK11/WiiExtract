@@ -11,6 +11,9 @@ OUTPUT="build/linktest/libdolphin_android.so"
 
 rm -f "$OUTPUT"
 
+echo "=== COMPILANDO FORMATS DESDE FUENTE ==="
+./scripts/build-formats.sh
+
 echo "=== ENLAZANDO DOLPHIN PARA ANDROID ==="
 
 if clang++ \
@@ -36,7 +39,7 @@ if clang++ \
   -Wl,--start-group \
   build/discio-custom/libdiscio.a \
   "$LIBS/Source/Core/Common/libcommon.a" \
-  build/core-minimal/Formats.sections.o \
+  build/core-minimal/Formats.rebuilt.o \
   "$LIBS/Source/Core/Core/CMakeFiles/core.dir/IOS/IOSC.cpp.o" \
   "$LIBS/Externals/mbedtls/library/libmbedcrypto.a" \
   "$LIBS/Externals/mbedtls/library/libmbedx509.a" \
